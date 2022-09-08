@@ -3,6 +3,7 @@ package me.hugo.singledungeon.listener;
 import me.hugo.singledungeon.SingleDungeon;
 import me.hugo.singledungeon.game.Game;
 import me.hugo.singledungeon.player.DungeonPlayer;
+import me.hugo.singledungeon.stats.PlayerStat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -29,10 +30,10 @@ public class EntityDeath implements Listener {
 
         event.getDrops().clear();
         event.setDroppedExp(0);
-        event.setDeathSound(Sound.BLOCK_NOTE_BLOCK_PLING);
 
         Game game = main.getMobRegistry().getFromMob(deadMob);
 
+        game.getPlayer().addMobKill();
         game.getCurrentMobs().remove(deadMob);
     }
 
@@ -48,6 +49,7 @@ public class EntityDeath implements Listener {
 
         event.setCancelled(true);
         currentGame.end();
+        dungeonPlayer.addToStat(PlayerStat.DEATHS);
         player.sendMessage(Component.text("You died!", NamedTextColor.RED));
     }
 

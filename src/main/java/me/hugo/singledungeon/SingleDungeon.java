@@ -3,11 +3,13 @@ package me.hugo.singledungeon;
 import me.hugo.singledungeon.command.LeaveCommand;
 import me.hugo.singledungeon.command.SingleDungeonCommand;
 import me.hugo.singledungeon.command.StartCommand;
+import me.hugo.singledungeon.database.DatabaseConnectionHandler;
 import me.hugo.singledungeon.game.Game;
 import me.hugo.singledungeon.game.GameRegistry;
 import me.hugo.singledungeon.game.mob.DungeonMobRegistry;
 import me.hugo.singledungeon.listener.CancelledEvents;
 import me.hugo.singledungeon.listener.EntityDeath;
+import me.hugo.singledungeon.listener.EntityTarget;
 import me.hugo.singledungeon.listener.PlayerJoinLeave;
 import me.hugo.singledungeon.player.DungeonPlayerRegistry;
 import me.hugo.singledungeon.schedule.GameRunTask;
@@ -18,6 +20,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,11 +30,13 @@ import java.util.stream.Collectors;
 
 public final class SingleDungeon extends JavaPlugin {
 
-    private final DungeonPlayerRegistry playerRegistry = new DungeonPlayerRegistry();
+    private final DungeonPlayerRegistry playerRegistry = new DungeonPlayerRegistry(this);
     private final DungeonMobRegistry mobRegistry = new DungeonMobRegistry();
     private final GameRegistry gameRegistry = new GameRegistry();
 
     private BukkitCommandHandler commandHandler;
+
+    private DatabaseConnectionHandler connectionHandler;
 
     private Location dungeonPlayerLocation;
     private List<Location> mobSpawnLocations;
@@ -50,7 +57,8 @@ public final class SingleDungeon extends JavaPlugin {
             logger.warning("Dungeon player location is not set up");
         }
 
-        mobSpawnLocations = getConfig().getStringList("game-data.mob-spawn-locations").stream().map(LocationUtil::getLocationByString).collect(Collectors.toList());
+        mobSpawnLocations = getConfig().getStringList("game-data.mob-spawn-locations")
+                .stream().map(LocationUtil::getLocationByString).collect(Collectors.toList());
 
         if (mobSpawnLocations.size() == 0) {
             logger.warning("Dungeon mob spawn locations are not set up or empty!");
@@ -63,6 +71,7 @@ public final class SingleDungeon extends JavaPlugin {
         pluginManager.registerEvents(new PlayerJoinLeave(this), this);
         pluginManager.registerEvents(new CancelledEvents(this), this);
         pluginManager.registerEvents(new EntityDeath(this), this);
+        pluginManager.registerEvents(new EntityTarget(this), this);
 
         logger.info("Creating commands...");
         commandHandler = BukkitCommandHandler.create(this);
@@ -72,6 +81,21 @@ public final class SingleDungeon extends JavaPlugin {
         commandHandler.register(new LeaveCommand(this));
 
         commandHandler.registerBrigadier();
+
+        logger.info("Starting up MySQL Connection Handler...");
+        connectionHandler = new DatabaseConnectionHandler(this);
+
+        try (Connection connection = connectionHandler.getConnection()) {
+            Statement tableCreation = connection.createStatement();
+
+            tableCreation.executeUpdate("CREATE TABLE IF NOT EXISTS `player_stats` (`uuid` VARCHAR(36) PRIMARY KEY, " +
+                    "`mob_kills` INT NOT NULL DEFAULT '0', " +
+                    "`sessions` INT NOT NULL DEFAULT '0', " +
+                    "`average_kills` INT NOT NULL DEFAULT '0', " +
+                    "`deaths` INT NOT NULL DEFAULT '0')");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         logger.info("Starting game running tasks...");
         new GameRunTask(this).runTaskTimer(this, 0L, 20L);
@@ -86,6 +110,8 @@ public final class SingleDungeon extends JavaPlugin {
         for (Game game : gameRegistry.getRunningGames()) {
             game.end();
         }
+
+        connectionHandler.getDataSource().close();
     }
 
     public DungeonPlayerRegistry getPlayerRegistry() {
@@ -102,6 +128,10 @@ public final class SingleDungeon extends JavaPlugin {
 
     public Location getDungeonPlayerLocation() {
         return dungeonPlayerLocation;
+    }
+
+    public DatabaseConnectionHandler getConnectionHandler() {
+        return connectionHandler;
     }
 
     public List<Location> getMobSpawnLocations() {

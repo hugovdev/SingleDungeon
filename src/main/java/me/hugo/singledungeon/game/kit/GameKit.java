@@ -36,8 +36,7 @@ public enum GameKit {
             new ItemStack(Material.LEATHER_BOOTS),
             Arrays.asList(
                     new GameKitItem(0, new ItemStack(Material.STONE_SWORD)),
-                    new GameKitItem(1, new ItemStack(Material.GOLDEN_APPLE, 1)))),
-    ;
+                    new GameKitItem(1, new ItemStack(Material.GOLDEN_APPLE, 1))));
 
     private final String kitName;
     private final ItemStack helmet;
@@ -72,7 +71,7 @@ public enum GameKit {
         inventory.setBoots(this.boots);
 
         for (GameKitItem kitItem : this.inventoryItems) {
-            inventory.setItem(kitItem.getSlot(), kitItem.getItem());
+            inventory.setItem(kitItem.slot(), kitItem.item());
         }
     }
 }

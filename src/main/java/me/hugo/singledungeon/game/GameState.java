@@ -6,7 +6,8 @@ import me.hugo.singledungeon.game.action.list.StartingGameStateAction;
 
 public enum GameState {
 
-    STARTING(new StartingGameStateAction()), FIGHTING(new FightingGameStateAction());
+    STARTING(new StartingGameStateAction()),
+    FIGHTING(new FightingGameStateAction());
 
     private final GameStateAction action;
 

@@ -3,6 +3,7 @@ package me.hugo.singledungeon.game;
 import me.hugo.singledungeon.SingleDungeon;
 import me.hugo.singledungeon.game.kit.GameKit;
 import me.hugo.singledungeon.player.DungeonPlayer;
+import me.hugo.singledungeon.stats.PlayerStat;
 import me.hugo.singledungeon.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -39,6 +40,8 @@ public final class Game {
             if (onlinePlayer.canSee(bukkitPlayer) && onlinePlayer != bukkitPlayer)
                 onlinePlayer.hidePlayer(main, bukkitPlayer);
         }
+
+        player.addToStat(PlayerStat.SESSIONS);
     }
 
     public void end() {
@@ -50,6 +53,12 @@ public final class Game {
             if (!onlinePlayer.canSee(bukkitPlayer) && onlinePlayer != bukkitPlayer)
                 onlinePlayer.showPlayer(main, bukkitPlayer);
         }
+
+        int mobKills = player.getCurrentMobKills();
+
+        player.addToAverageStat(PlayerStat.AVERAGE_KILLS, mobKills);
+        player.addToStat(PlayerStat.MOB_KILLS, mobKills);
+        player.resetMobKills();
 
         player.getLastState().restore(bukkitPlayer);
         main.getGameRegistry().unregisterGame(this);
@@ -63,18 +72,16 @@ public final class Game {
         return currentCountdown;
     }
 
-    public Game setCurrentCountdown(int currentCountdown) {
+    public void setCurrentCountdown(int currentCountdown) {
         this.currentCountdown = currentCountdown;
-        return this;
     }
 
     public GameState getState() {
         return state;
     }
 
-    public Game setState(GameState state) {
+    public void setState(GameState state) {
         this.state = state;
-        return this;
     }
 
     public List<Entity> getCurrentMobs() {

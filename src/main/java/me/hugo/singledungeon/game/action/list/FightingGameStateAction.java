@@ -3,12 +3,13 @@ package me.hugo.singledungeon.game.action.list;
 import me.hugo.singledungeon.SingleDungeon;
 import me.hugo.singledungeon.game.Game;
 import me.hugo.singledungeon.game.action.GameStateAction;
-import me.hugo.singledungeon.player.DungeonPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,8 +20,6 @@ public final class FightingGameStateAction implements GameStateAction {
 
     @Override
     public void gameTick(SingleDungeon main, Game game) {
-        DungeonPlayer player = game.getPlayer();
-
         // Mob Cap
         if (game.getCurrentMobs().size() >= mobCap) return;
 
@@ -39,7 +38,9 @@ public final class FightingGameStateAction implements GameStateAction {
         Player bukkitPlayer = game.getPlayer().getPlayer();
 
         Creature entity = (Creature) location.getWorld().spawnEntity(location, EntityType.ZOMBIE);
+        entity.setSilent(true);
         entity.setCustomNameVisible(true);
+        entity.setCollidable(false);
         entity.customName(Component.text("Zombie", NamedTextColor.AQUA));
 
         entity.setTarget(bukkitPlayer);

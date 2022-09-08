@@ -24,6 +24,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     implementation 'com.github.Revxrsal.Lamp:common:3.0.71'
     implementation 'com.github.Revxrsal.Lamp:bukkit:3.0.71'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
 }
 
 tasks {

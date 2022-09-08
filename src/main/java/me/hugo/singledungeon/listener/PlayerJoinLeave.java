@@ -58,10 +58,9 @@ public final class PlayerJoinLeave implements Listener {
         if (dungeonPlayer == null) return;
         Game currentGame = dungeonPlayer.getCurrentGame();
 
-        if (currentGame == null) return;
-        currentGame.end();
+        if (currentGame != null) currentGame.end();
 
-        // Save player data
+        dungeonPlayer.saveData(main);
     }
 
 }
