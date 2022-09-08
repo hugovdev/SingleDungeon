@@ -1,0 +1,11 @@
+#
+# SingleDungeon config file, please set up locations for
+# the dungeon ingame using the /singledungeon command.
+#
+database:
+  ip: "localhost"
+  port: 3306
+  user: "root"
+  password: ""
+  schema: "single_dungeon_data"
+game-data:

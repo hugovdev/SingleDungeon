@@ -1,0 +1,6 @@
+name: SingleDungeon
+version: '${version}'
+main: me.hugo.singledungeon.SingleDungeon
+api-version: 1.18
+authors: [ Hugo ]
+description: Small Dungeon Minigame
