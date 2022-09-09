@@ -8,12 +8,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class DatabaseConnectionHandler {
 
     private final HikariDataSource dataSource;
 
     public DatabaseConnectionHandler(SingleDungeon main) {
+        Logger logger = main.getLogger();
         FileConfiguration config = main.getConfig();
 
         String ip, port, schema;
@@ -34,7 +36,16 @@ public class DatabaseConnectionHandler {
         HikariConfig configuration = new HikariConfig(sqlProperties);
         configuration.setMaximumPoolSize(10);
 
-        this.dataSource = new HikariDataSource(configuration);
+        HikariDataSource possibleSource = null;
+
+        try {
+            possibleSource = new HikariDataSource(configuration);
+            logger.info("Database connection established!");
+        } catch (Exception exception) {
+            logger.warning("Unable to connect to the database. Plugin won't work as expected!");
+        }
+
+        this.dataSource = possibleSource;
     }
 
     public HikariDataSource getDataSource() {

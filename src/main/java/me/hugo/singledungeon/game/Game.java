@@ -58,7 +58,8 @@ public final class Game {
 
         player.addToAverageStat(PlayerStat.AVERAGE_KILLS, mobKills);
         player.addToStat(PlayerStat.MOB_KILLS, mobKills);
-        player.resetMobKills();
+        player.resetTemporaryStats();
+        player.getPlayer().closeInventory();
 
         player.getLastState().restore(bukkitPlayer);
         main.getGameRegistry().unregisterGame(this);

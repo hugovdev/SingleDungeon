@@ -44,6 +44,7 @@ public final class PlayerJoinLeave implements Listener {
 
         main.getPlayerRegistry().get(player).setPlayer(player);
 
+        // Hide current players in dungeons and their mobs!
         for (Game runningGame : main.getGameRegistry().getRunningGames()) {
             for (Entity dungeonMob : runningGame.getCurrentMobs()) player.hideEntity(main, dungeonMob);
             player.hidePlayer(main, runningGame.getPlayer().getPlayer());

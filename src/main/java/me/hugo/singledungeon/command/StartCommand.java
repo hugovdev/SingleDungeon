@@ -6,6 +6,7 @@ import me.hugo.singledungeon.game.kit.GameKit;
 import me.hugo.singledungeon.player.DungeonPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Default;
@@ -34,8 +35,11 @@ public final class StartCommand {
         currentGame = new Game(main, dungeonPlayer);
 
         main.getGameRegistry().registerGame(new Game(main, dungeonPlayer));
-        player.sendMessage(Component.text("Joining dungeon!", NamedTextColor.GREEN));
+        player.sendMessage(Component.text("Entering the dungeon with ", NamedTextColor.YELLOW)
+                .append(Component.text(gameKit.getKitName(), NamedTextColor.RED))
+                .append(Component.text("!")));
         currentGame.join(gameKit);
+        player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
     }
 
 }

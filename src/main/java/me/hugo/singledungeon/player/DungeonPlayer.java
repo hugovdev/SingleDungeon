@@ -23,7 +23,9 @@ public final class DungeonPlayer {
     private PlayerState lastState;
 
     private int currentMobKills = 0;
-    private Map<PlayerStat, Integer> statsData = new HashMap<>();
+    private int timeAlive = 0;
+
+    private final Map<PlayerStat, Integer> statsData = new HashMap<>();
 
     private Game currentGame;
 
@@ -59,6 +61,10 @@ public final class DungeonPlayer {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getStatValue(PlayerStat playerStat) {
+        return statsData.get(playerStat);
     }
 
     public void addToStat(PlayerStat playerStat) {
@@ -103,8 +109,17 @@ public final class DungeonPlayer {
         return currentMobKills;
     }
 
-    public void resetMobKills() {
+    public void resetTemporaryStats() {
         this.currentMobKills = 0;
+        this.timeAlive = 0;
+    }
+
+    public void addAliveTime() {
+        this.timeAlive++;
+    }
+
+    public int getTimeAlive() {
+        return timeAlive;
     }
 
     public void addMobKill() {
@@ -127,9 +142,8 @@ public final class DungeonPlayer {
         return currentGame;
     }
 
-    public DungeonPlayer setCurrentGame(Game currentGame) {
+    public void setCurrentGame(Game currentGame) {
         this.currentGame = currentGame;
-        return this;
     }
 
     public DungeonPlayer setPlayer(Player player) {

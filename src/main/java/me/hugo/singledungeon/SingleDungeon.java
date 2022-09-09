@@ -3,6 +3,7 @@ package me.hugo.singledungeon;
 import me.hugo.singledungeon.command.LeaveCommand;
 import me.hugo.singledungeon.command.SingleDungeonCommand;
 import me.hugo.singledungeon.command.StartCommand;
+import me.hugo.singledungeon.command.StatsCommand;
 import me.hugo.singledungeon.database.DatabaseConnectionHandler;
 import me.hugo.singledungeon.game.Game;
 import me.hugo.singledungeon.game.GameRegistry;
@@ -79,6 +80,7 @@ public final class SingleDungeon extends JavaPlugin {
         commandHandler.register(new SingleDungeonCommand(this));
         commandHandler.register(new StartCommand(this));
         commandHandler.register(new LeaveCommand(this));
+        commandHandler.register(new StatsCommand(this));
 
         commandHandler.registerBrigadier();
 
