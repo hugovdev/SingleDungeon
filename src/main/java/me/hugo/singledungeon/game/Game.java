@@ -45,7 +45,10 @@ public final class Game {
     }
 
     public void end() {
-        for (Entity entity : currentMobs) entity.remove();
+        for (Entity entity : currentMobs) {
+            main.getMobRegistry().removeMob(entity);
+            entity.remove();
+        }
 
         Player bukkitPlayer = player.getPlayer();
 

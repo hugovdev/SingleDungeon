@@ -42,6 +42,7 @@ public class EntityDeath implements Listener {
 
         game.getPlayer().addMobKill();
         game.getCurrentMobs().remove(deadMob);
+        main.getMobRegistry().removeMob(deadMob);
     }
 
     @EventHandler
