@@ -8,10 +8,7 @@ import me.hugo.singledungeon.database.DatabaseConnectionHandler;
 import me.hugo.singledungeon.game.Game;
 import me.hugo.singledungeon.game.GameRegistry;
 import me.hugo.singledungeon.game.mob.DungeonMobRegistry;
-import me.hugo.singledungeon.listener.CancelledEvents;
-import me.hugo.singledungeon.listener.EntityDeath;
-import me.hugo.singledungeon.listener.EntityTarget;
-import me.hugo.singledungeon.listener.PlayerJoinLeave;
+import me.hugo.singledungeon.listener.*;
 import me.hugo.singledungeon.player.DungeonPlayerRegistry;
 import me.hugo.singledungeon.schedule.GameRunTask;
 import me.hugo.singledungeon.util.LocationUtil;
@@ -71,8 +68,9 @@ public final class SingleDungeon extends JavaPlugin {
 
         pluginManager.registerEvents(new PlayerJoinLeave(this), this);
         pluginManager.registerEvents(new CancelledEvents(this), this);
-        pluginManager.registerEvents(new EntityDeath(this), this);
+        pluginManager.registerEvents(new EntityDamageDeath(this), this);
         pluginManager.registerEvents(new EntityTarget(this), this);
+        pluginManager.registerEvents(new InventoryClick(), this);
 
         logger.info("Creating commands...");
         commandHandler = BukkitCommandHandler.create(this);
@@ -90,6 +88,9 @@ public final class SingleDungeon extends JavaPlugin {
         try (Connection connection = connectionHandler.getConnection()) {
             Statement tableCreation = connection.createStatement();
 
+            /*
+            Create query from PlayerStat enum.
+             */
             tableCreation.executeUpdate("CREATE TABLE IF NOT EXISTS `player_stats` (`uuid` VARCHAR(36) PRIMARY KEY, " +
                     "`mob_kills` INT NOT NULL DEFAULT '0', " +
                     "`sessions` INT NOT NULL DEFAULT '0', " +

@@ -42,19 +42,4 @@ public class CancelledEvents implements Listener {
         if (dungeonPlayer.getCurrentGame() != null) event.setCancelled(true);
     }
 
-    @EventHandler
-    public void onStatsMenuClick(InventoryClickEvent event) {
-        HumanEntity player = event.getWhoClicked();
-
-        if (player.getOpenInventory().getTopInventory().getHolder() instanceof StatsMenu menu) {
-            event.setCancelled(true);
-
-            if (event.getCurrentItem() == null) return;
-            if (event.getCurrentItem().isSimilar(menu.getCloseMenuItem())) {
-                player.closeInventory();
-                ((Player) player).playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.0f, 1.0f);
-            }
-        }
-    }
-
 }

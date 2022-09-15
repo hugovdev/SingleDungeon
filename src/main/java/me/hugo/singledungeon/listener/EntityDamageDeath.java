@@ -21,11 +21,11 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EntityDeath implements Listener {
+public class EntityDamageDeath implements Listener {
 
     private final SingleDungeon main;
 
-    public EntityDeath(SingleDungeon main) {
+    public EntityDamageDeath(SingleDungeon main) {
         this.main = main;
     }
 
